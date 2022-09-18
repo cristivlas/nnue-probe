@@ -15,6 +15,8 @@
 #endif
 //-------------------
 
+#include "auto.h"
+
 #if defined(USE_AVX2)
 #include <immintrin.h>
 
@@ -1268,7 +1270,7 @@ Interfaces
 DLLExport bool _CDECL nnue_init(const char* evalFile)
 {
   if (load_eval_file(evalFile)) {
-    printf("Loaded NNUE: %s\n", evalFile);
+    printf("Loaded NNUE: %s (%s)\n", evalFile, CONFIG);
     fflush(stdout);
     return true;
   }
