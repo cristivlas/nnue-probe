@@ -98,7 +98,7 @@ int nnue_evaluate_pos(Position* pos);
 /**
 * Load NNUE file
 */
-DLLExport void _CDECL nnue_init(
+DLLExport bool _CDECL nnue_init(
   const char * evalFile             /** Path to NNUE file */
 );
 

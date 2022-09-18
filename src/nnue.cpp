@@ -1265,19 +1265,14 @@ static bool load_eval_file(const char *evalFile)
 /*
 Interfaces
 */
-DLLExport void _CDECL nnue_init(const char* evalFile)
+DLLExport bool _CDECL nnue_init(const char* evalFile)
 {
-  printf("Loading NNUE : %s\n", evalFile);
-  fflush(stdout);
-
   if (load_eval_file(evalFile)) {
-    printf("NNUE loaded !\n");
+    printf("Loaded NNUE: %s\n", evalFile);
     fflush(stdout);
-    return;
+    return true;
   }
-
-  printf("NNUE file not found!\n");
-  fflush(stdout);
+  return false;
 }
 
 DLLExport int _CDECL nnue_evaluate(
