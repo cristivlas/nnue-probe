@@ -43,7 +43,7 @@
 #endif
 
 
-static const char CONFIG[] = ""
+static const char NNUE_CONFIG[] = ""
 #ifdef USE_AVX2
     "avx2/"
 #endif

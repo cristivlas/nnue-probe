@@ -1270,7 +1270,7 @@ Interfaces
 DLLExport bool _CDECL nnue_init(const char* evalFile)
 {
   if (load_eval_file(evalFile)) {
-    printf("Loaded NNUE: %s (%s)\n", evalFile, CONFIG);
+    printf("Loaded NNUE: %s (%s)\n", evalFile, NNUE_CONFIG);
     fflush(stdout);
     return true;
   }
