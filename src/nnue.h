@@ -49,15 +49,15 @@ enum pieces {
 */
 
 typedef struct DirtyPiece {
-  int dirtyNum;
-  int pc[3];
-  int from[3];
-  int to[3];
+  int dirtyNum = 0;
+  int pc[3] = { 0 };
+  int from[3] = { 0 };
+  int to[3] = { 0 };
 } DirtyPiece;
 
 typedef struct Accumulator {
-  alignas(64) int16_t accumulation[2][256];
-  int computedAccumulation;
+  alignas(64) int16_t accumulation[2][256] = {};
+  int computedAccumulation = 0;
 } Accumulator;
 
 typedef struct NNUEdata {
