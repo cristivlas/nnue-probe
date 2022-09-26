@@ -47,9 +47,13 @@ enum pieces {
 /**
 * nnue data structure
 */
-
+/**
+ * Max 3 pieces can change in one move. A promotion with capture moves
+ * both the pawn and the captured piece to 64 and the piece promoted
+ * to from 64 to the capture square.
+ */
 typedef struct DirtyPiece {
-  int dirtyNum;
+  int dirtyNum; /* Number of changed pieces */
   int pc[3];
   int from[3];
   int to[3];
