@@ -78,6 +78,9 @@ enum {
   PS_END      = 10 * 64 + 1
 };
 
+#ifdef __cplusplus
+constexpr
+#endif
 uint32_t PieceToIndex[2][14] = {
   { 0, 0, PS_W_QUEEN, PS_W_ROOK, PS_W_BISHOP, PS_W_KNIGHT, PS_W_PAWN,
        0, PS_B_QUEEN, PS_B_ROOK, PS_B_BISHOP, PS_B_KNIGHT, PS_B_PAWN, 0},
@@ -207,6 +210,9 @@ INLINE unsigned make_index(int c, int s, int pc, int ksq)
   return orient(c, s) + PieceToIndex[c][pc] + PS_END * ksq;
 }
 
+#ifdef __cplusplus
+template<typename Position>
+#endif
 static void half_kp_append_active_indices(const Position *pos, const int c,
     IndexList *active)
 {
@@ -219,6 +225,9 @@ static void half_kp_append_active_indices(const Position *pos, const int c,
   }
 }
 
+#ifdef __cplusplus
+template<typename Position>
+#endif
 static void half_kp_append_changed_indices(const Position *pos, const int c,
     const DirtyPiece *dp, IndexList *removed, IndexList *added)
 {
@@ -234,12 +243,18 @@ static void half_kp_append_changed_indices(const Position *pos, const int c,
   }
 }
 
+#ifdef __cplusplus
+template<typename Position>
+#endif
 static void append_active_indices(const Position *pos, IndexList active[2])
 {
   for (unsigned c = 0; c < 2; c++)
     half_kp_append_active_indices(pos, c, &active[c]);
 }
 
+#ifdef __cplusplus
+template<typename Position>
+#endif
 static void append_changed_indices(const Position *pos, IndexList removed[2],
     IndexList added[2], bool reset[2])
 {
@@ -894,7 +909,10 @@ static int16_t ft_weights alignas(64) [kHalfDimensions * FtInDims];
 #endif
 
 // Calculate cumulative value without using difference calculation
-INLINE void refresh_accumulator(Position *pos)
+#ifdef __cplusplus
+template<typename Position>
+#endif
+INLINE void refresh_accumulator(const Position *pos)
 {
   Accumulator *accumulator = &(pos->nnue[0]->accumulator);
 
@@ -942,7 +960,10 @@ INLINE void refresh_accumulator(Position *pos)
 }
 
 // Calculate cumulative value using difference calculation if possible
-INLINE bool update_accumulator(Position *pos)
+#ifdef __cplusplus
+template<typename Position>
+#endif
+INLINE bool update_accumulator(const Position *pos)
 {
   Accumulator *accumulator = &(pos->nnue[0]->accumulator);
   if (accumulator->computedAccumulation)
@@ -1033,7 +1054,10 @@ INLINE bool update_accumulator(Position *pos)
 }
 
 // Convert input features
-INLINE void transform(Position *pos, clipped_t *output, mask_t *outMask)
+#ifdef __cplusplus
+template<typename Position>
+#endif
+INLINE void transform(const Position *pos, clipped_t *output, mask_t *outMask)
 {
   if (!update_accumulator(pos))
     refresh_accumulator(pos);
@@ -1077,7 +1101,10 @@ struct NetData {
 };
 
 // Evaluation function
-int nnue_evaluate_pos(Position *pos)
+#ifdef __cplusplus
+template<typename Position> INLINE
+#endif
+int nnue_evaluate_pos(const Position *pos)
 {
   int32_t out_value;
   alignas(8) mask_t input_mask[FtOutDims / (8 * sizeof(mask_t))];
@@ -1314,3 +1341,45 @@ DLLExport int _CDECL nnue_evaluate_fen(const char* fen)
   decode_fen((char*)fen,&player,&castle,&fifty,&move_number,pieces,squares);;
   return nnue_evaluate(player,pieces,squares);
 }
+
+
+#if defined(__cplusplus)
+/************************************************************************
+ *
+ * C++ interfaces
+ *
+ *************************************************************************/
+
+int nnue::evaluate(
+  bool player,                    /** Side to move: white=0 black=1 */
+  const int8_t (&pieces)[33],     /** Array of pieces */
+  const int8_t (&squares)[33]     /** Corresponding array of squares each piece stands on */
+)
+{
+  NNUEdata nnue;
+  nnue.accumulator.computedAccumulation = 0;
+
+  const auto pos = nnue::Position {
+    player, pieces, squares, { &nnue, nullptr, nullptr }
+  };
+  return nnue_evaluate_pos(&pos);
+}
+
+
+int nnue::evaluate(
+  bool player,                    /** Side to move: white=0 black=1 */
+  const int8_t (&pieces)[33],     /** Array of pieces */
+  const int8_t (&squares)[33],    /** Corresponding array of squares each piece stands on */
+  NNUEdata* nnue[3]               /** NNUEdata* for current and previous plies */
+)
+{
+  assert(nnue[0] && (uint64_t)(&nnue[0]->accumulator) % 64 == 0);
+
+  const auto pos  = nnue::Position {
+    player, pieces, squares, { nnue[0], nnue[1], nnue[2] }
+  };
+
+  return nnue_evaluate_pos(&pos);
+}
+
+#endif /* __cplusplus */

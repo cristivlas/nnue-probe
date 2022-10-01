@@ -80,7 +80,9 @@ typedef struct Position {
   NNUEdata* nnue[3];
 } Position;
 
-int nnue_evaluate_pos(Position* pos);
+#ifndef __cplusplus
+int nnue_evaluate_pos(const Position* pos);
+#endif
 
 /************************************************************************
 *         EXTERNAL INTERFACES
@@ -91,7 +93,7 @@ int nnue_evaluate_pos(Position* pos);
 *
 * and then probe score using one of three functions, whichever
 * is convenient. From easy to hard
-*   
+*
 *   a) nnue_evaluate_fen         - accepts a fen string for evaluation
 *   b) nnue_evaluate             - suitable for use in engines
 *   c) nnue_evaluate_incremental - for ultimate performance but will need
@@ -156,4 +158,35 @@ DLLExport int _CDECL nnue_evaluate_incremental(
   NNUEdata** nnue_data              /** Pointer to NNUEdata* for current and previous plies */
 );
 
-#endif
+
+#if defined(__cplusplus)
+/************************************************************************
+ *
+ * C++ interfaces
+ *
+ *************************************************************************/
+namespace nnue {
+  struct Position {
+    const bool player;
+    const int8_t (&pieces)[33];
+    const int8_t (&squares)[33];
+    NNUEdata* nnue[3];
+  };
+
+  int evaluate(
+    bool player,                    /** Side to move: white=0 black=1 */
+    const int8_t (&pieces)[33],     /** Array of pieces */
+    const int8_t (&squares)[33]     /** Corresponding array of squares each piece stands on */
+  );
+
+  int evaluate(
+    bool player,                    /** Side to move: white=0 black=1 */
+    const int8_t (&pieces)[33],     /** Array of pieces */
+    const int8_t (&squares)[33],    /** Corresponding array of squares each piece stands on */
+    NNUEdata* nnue[3]               /** NNUEdata* for current and previous plies */
+  );
+}
+
+#endif /* __cplusplus */
+
+#endif /* NNUE_H */
