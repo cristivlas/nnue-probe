@@ -1,3 +1,11 @@
+/************************************************************************
+ * NNUE Docs:
+ *
+ * https://en.wikipedia.org/wiki/Efficiently_updatable_neural_network
+ * https://github.com/glinscott/nnue-pytorch/blob/master/docs/nnue.md
+ *
+ ************************************************************************/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
