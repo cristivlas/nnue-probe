@@ -221,7 +221,7 @@ INLINE unsigned make_index(int c, int s, int pc, int ksq)
 #ifdef __cplusplus
 template<typename Position>
 #endif
-static void half_kp_append_active_indices(const Position *pos, const int c,
+INLINE void half_kp_append_active_indices(const Position *pos, const int c,
     IndexList *active)
 {
   int ksq = pos->squares[c];
@@ -234,9 +234,23 @@ static void half_kp_append_active_indices(const Position *pos, const int c,
 }
 
 #ifdef __cplusplus
+INLINE void half_kp_append_active_indices(const nnue::Position *pos, int c, IndexList *active)
+{
+  pos->update(pos->board, pos->pieces, pos->squares);
+  int ksq = pos->squares[c];
+  ksq = orient(c, ksq);
+  for (int i = 2; pos->pieces[i]; ++i) {
+    int sq = pos->squares[i];
+    int pc = pos->pieces[i];
+    active->values[active->size++] = make_index(c, sq, pc, ksq);
+  }
+}
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
 template<typename Position>
 #endif
-static void half_kp_append_changed_indices(const Position *pos, const int c,
+INLINE void half_kp_append_changed_indices(const Position *pos, const int c,
     const DirtyPiece *dp, IndexList *removed, IndexList *added)
 {
   int ksq = pos->squares[c];
@@ -254,7 +268,7 @@ static void half_kp_append_changed_indices(const Position *pos, const int c,
 #ifdef __cplusplus
 template<typename Position>
 #endif
-static void append_active_indices(const Position *pos, IndexList active[2])
+INLINE void append_active_indices(const Position *pos, IndexList active[2])
 {
   for (unsigned c = 0; c < 2; c++)
     half_kp_append_active_indices(pos, c, &active[c]);
@@ -1352,41 +1366,9 @@ DLLExport int _CDECL nnue_evaluate_fen(const char* fen)
 
 
 #if defined(__cplusplus)
-/************************************************************************
- *
- * C++ interfaces
- *
- *************************************************************************/
 
-int nnue::evaluate(
-  bool player,                    /** Side to move: white=0 black=1 */
-  const int8_t (&pieces)[33],     /** Array of pieces */
-  const int8_t (&squares)[33]     /** Corresponding array of squares each piece stands on */
-)
+int nnue::evaluate(const Position& pos)
 {
-  NNUEdata nnue;
-  nnue.accumulator.computedAccumulation = 0;
-
-  const auto pos = nnue::Position {
-    player, pieces, squares, { &nnue, nullptr, nullptr }
-  };
-  return nnue_evaluate_pos(&pos);
-}
-
-
-int nnue::evaluate(
-  bool player,                    /** Side to move: white=0 black=1 */
-  const int8_t (&pieces)[33],     /** Array of pieces */
-  const int8_t (&squares)[33],    /** Corresponding array of squares each piece stands on */
-  NNUEdata* nnue[3]               /** NNUEdata* for current and previous plies */
-)
-{
-  assert(nnue[0] && (uint64_t)(&nnue[0]->accumulator) % 64 == 0);
-
-  const auto pos  = nnue::Position {
-    player, pieces, squares, { nnue[0], nnue[1], nnue[2] }
-  };
-
   return nnue_evaluate_pos(&pos);
 }
 

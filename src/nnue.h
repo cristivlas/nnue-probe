@@ -168,23 +168,14 @@ DLLExport int _CDECL nnue_evaluate_incremental(
 namespace nnue {
   struct Position {
     const bool player;
-    const int8_t (&pieces)[33];
-    const int8_t (&squares)[33];
-    NNUEdata* nnue[3];
+    int8_t (&pieces)[33];
+    int8_t (&squares)[33];
+    NNUEdata* (&nnue)[3];
+    const void* board = nullptr;    /** engine's internal board representation */
+    void (*update)(const void*, int8_t (&pcs)[33], int8_t (&sqrs)[33]) = nullptr;
   };
 
-  int evaluate(
-    bool player,                    /** Side to move: white=0 black=1 */
-    const int8_t (&pieces)[33],     /** Array of pieces */
-    const int8_t (&squares)[33]     /** Corresponding array of squares each piece stands on */
-  );
-
-  int evaluate(
-    bool player,                    /** Side to move: white=0 black=1 */
-    const int8_t (&pieces)[33],     /** Array of pieces */
-    const int8_t (&squares)[33],    /** Corresponding array of squares each piece stands on */
-    NNUEdata* nnue[3]               /** NNUEdata* for current and previous plies */
-  );
+  int evaluate(const Position&);
 }
 
 #endif /* __cplusplus */
