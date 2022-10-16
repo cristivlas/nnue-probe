@@ -277,7 +277,7 @@ INLINE void append_active_indices(const Position *pos, IndexList active[2])
 #ifdef __cplusplus
 template<typename Position>
 #endif
-static void append_changed_indices(const Position *pos, IndexList removed[2],
+INLINE void append_changed_indices(const Position *pos, IndexList removed[2],
     IndexList added[2], bool reset[2])
 {
   const DirtyPiece *dp = &(pos->nnue[0]->dirtyPiece);
