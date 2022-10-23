@@ -1372,4 +1372,10 @@ int nnue::evaluate(const Position& pos)
   return nnue_evaluate_pos(&pos);
 }
 
+void nnue::update_or_refresh_accumulator(const Position& pos)
+{
+  if (!update_accumulator(&pos))
+    refresh_accumulator(&pos);
+}
+
 #endif /* __cplusplus */

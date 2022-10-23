@@ -176,6 +176,8 @@ namespace nnue {
   };
 
   int evaluate(const Position&);
+
+  void update_or_refresh_accumulator(const Position&);
 }
 
 #endif /* __cplusplus */
