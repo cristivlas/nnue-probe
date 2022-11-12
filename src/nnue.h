@@ -21,7 +21,7 @@
 #ifdef DLL_EXPORT
 #   define DLLExport EXTERNC __declspec(dllexport)
 #else
-#   define DLLExport EXTERNC __declspec(dllimport)
+#   define DLLExport EXTERNC
 #endif
 #else
 #   define _CDECL
