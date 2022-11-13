@@ -13,15 +13,17 @@
 #include <stdlib.h>
 
 //--------------------
+#if defined(_MSC_VER)
 // Deprecated. /arch:AVX2 compiler option and "auto.h" should just do.
-#if 0 && defined(_MSC_VER)
+#if 0
 #  define USE_AVX2   1
+#endif
 #  define USE_SSE41  1
 #  define USE_SSE3   1
 #  define USE_SSE2   1
 #  define USE_SSE    1
 #  define IS_64BIT   1
-#endif
+#endif /* defined(_MSC_VER) */
 //-------------------
 
 #include "auto.h"
