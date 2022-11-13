@@ -2,7 +2,7 @@
 /*
   clang -march=native -dM -E - < /dev/null
  */
-#if defined(__x86_64) || defined (__x86_64__)
+#if defined(__x86_64) || defined (__x86_64__) || defined(_WIN64)
 #   define IS_64BIT     true
 #endif
 
@@ -18,11 +18,11 @@
 #   define USE_AVX512   true
 #endif
 
-#if defined(__SSE__)
+#if defined(__SSE__) && !defined(USE_SSE)
 #   define USE_SSE      true
 #endif
 
-#if defined(__SSE2__)
+#if defined(__SSE2__) && !defined(USE_SSE2)
 #   define USE_SSE2     true
 #endif
 

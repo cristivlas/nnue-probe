@@ -22,7 +22,6 @@
 #  define USE_SSE3   1
 #  define USE_SSE2   1
 #  define USE_SSE    1
-#  define IS_64BIT   1
 #endif /* defined(_MSC_VER) */
 //-------------------
 
