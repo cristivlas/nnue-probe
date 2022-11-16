@@ -26,15 +26,15 @@
 #   define USE_SSE2     true
 #endif
 
-#if defined(__SSE3__)
+#if defined(__SSE3__) && !defined(USE_SSE3)
 #   define USE_SSE3     true
 #endif
 
-#if defined(__SSE4_1__)
+#if defined(__SSE4_1__) && !defined(USE_SSE41)
 #   define USE_SSE41    true
 #endif
 
-#if defined (__SSSE3__)
+#if defined (__SSSE3__) && !defined(USE_SSSE3)
 #   define USE_SSSE3    true
 #endif
 
