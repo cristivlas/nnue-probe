@@ -409,17 +409,13 @@ INLINE int32_t affine_propagate(clipped_t *input, int32_t *biases,
 static_assert(FtOutDims % 64 == 0, "FtOutDims not a multiple of 64");
 
 #ifdef VECTOR
-INLINE bool next_idx(unsigned *idx, unsigned *offset, volatile mask2_t *v,
+INLINE bool next_idx(unsigned *idx, unsigned *offset, mask2_t *v,
     mask_t *mask, unsigned inDims)
 {
   while (*v == 0) {
     *offset += 8 * sizeof(mask2_t);
     if (*offset >= inDims) return false;
-  #if 0
     memcpy(v, (char *)mask + (*offset / 8), sizeof(mask2_t));
-  #else
-    *v = *(mask2_t*)((char *)mask + (*offset / 8));
-  #endif
   }
 #ifdef IS_64BIT
   *idx = *offset + bsf(*v);
